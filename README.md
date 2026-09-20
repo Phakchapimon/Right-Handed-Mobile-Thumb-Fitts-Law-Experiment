@@ -27,6 +27,7 @@ Scattered plot data:
 [fitts_law_thumb_data_1789906876774.csv](https://github.com/user-attachments/files/32436283/fitts_law_thumb_data_1789906876774.csv)
 
 9 conditions data table:
+
 <img width="402" height="183" alt="Screenshot 2569-09-20 at 11 14 33 PM" src="https://github.com/user-attachments/assets/de8128c0-bb1e-41f4-8c0a-0e491ce29ccc" />
 
 Fitts' Law Formula: 

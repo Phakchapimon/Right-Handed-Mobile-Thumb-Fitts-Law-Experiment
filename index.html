@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Right-Handed Mobile Thumb Fitts' Law Experiment</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -11,6 +12,7 @@
             -webkit-user-select: none;
             touch-action: manipulation;
         }
+
         body {
             margin: 0;
             padding: 0;
@@ -23,6 +25,7 @@
             min-height: 100vh;
             overflow: hidden;
         }
+
         #phone-frame {
             width: 100vw;
             height: 100vh;
@@ -37,22 +40,26 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             overflow: hidden;
         }
+
         header {
             padding: 12px;
             background-color: #252525;
             border-bottom: 1px solid #333;
             text-align: center;
         }
+
         h1 {
             margin: 0;
             font-size: 1.1rem;
             color: #00e676;
         }
+
         #stats {
             font-size: 0.85rem;
             color: #aaa;
             margin-top: 4px;
         }
+
         #canvas-container {
             flex: 1;
             position: relative;
@@ -60,6 +67,7 @@
             height: 100%;
             background-color: #181818;
         }
+
         .target {
             position: absolute;
             border-radius: 50%;
@@ -72,19 +80,23 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             touch-action: manipulation;
         }
+
         .target:active {
             transform: scale(0.95);
         }
+
         #start-btn {
             background: linear-gradient(135deg, #00c853, #00e676);
             color: #000;
             z-index: 10;
         }
+
         #action-target {
             background: linear-gradient(135deg, #ff3d00, #ff6e40);
             color: #fff;
             z-index: 20;
         }
+
         #overlay {
             position: absolute;
             top: 0;
@@ -101,12 +113,14 @@
             z-index: 100;
             overflow-y: auto;
         }
+
         .instructions {
             font-size: 0.85rem;
             line-height: 1.4;
             color: #ccc;
             margin-bottom: 12px;
         }
+
         .btn-ui {
             background-color: #00e676;
             color: #000;
@@ -121,6 +135,7 @@
             width: 85%;
             flex-shrink: 0;
         }
+
         #feedback-flash {
             position: absolute;
             top: 0;
@@ -132,35 +147,42 @@
             transition: opacity 0.15s ease-out;
             z-index: 50;
         }
+
         .hit {
             background-color: rgba(0, 230, 118, 0.15);
             opacity: 1 !important;
         }
+
         .miss {
             background-color: rgba(255, 23, 68, 0.25);
             opacity: 1 !important;
         }
+
         .metrics-grid {
             display: flex;
             justify-content: space-around;
             width: 100%;
             margin: 8px 0;
         }
+
         .metric-box {
             background: #2a2a2a;
             padding: 8px;
             border-radius: 8px;
             width: 30%;
         }
+
         .metric-val {
             font-size: 1.05rem;
             font-weight: bold;
             color: #00e676;
         }
+
         .metric-lbl {
             font-size: 0.7rem;
             color: #aaa;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -170,375 +192,1518 @@
             border-radius: 6px;
             overflow: hidden;
         }
+
         th, td {
             padding: 5px 4px;
             text-align: center;
             border-bottom: 1px solid #333;
         }
+
         th {
             background: #333;
             color: #00e676;
         }
+
+        .regression-box {
+            background: #252525;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .regression-box strong {
+            color: #00e676;
+        }
     </style>
 </head>
+
 <body>
 
 <div id="phone-frame">
+
     <header>
         <h1>Thumb Fitts' Law Experiment</h1>
+
         <div id="stats">
-            Trial: <span id="trial-count">0</span> / 108
+            Trial:
+            <span id="trial-count">0</span>
+            / 108
         </div>
     </header>
 
     <div id="canvas-container">
+
         <div id="feedback-flash"></div>
-        <div id="start-btn" class="target" style="display:none;">START</div>
-        <div id="action-target" class="target" style="display:none;">TAP</div>
+
+        <div id="start-btn"
+             class="target"
+             style="display:none;">
+            START
+        </div>
+
+        <div id="action-target"
+             class="target"
+             style="display:none;">
+            TAP
+        </div>
+
     </div>
 
     <div id="overlay">
-        <h2 id="overlay-title">Right-Handed Thumb Experiment</h2>
-        <div id="overlay-body" class="instructions">
-            <p><strong>Experimental Protocol:</strong></p>
-            <p>1. Hold your phone using <strong>only your right hand</strong> (one-handed shelf grip).</p>
-            <p>2. Perform all interactions using <strong>only your right thumb</strong>.</p>
-            <p>3. Tap the green <strong>START</strong> button in the bottom-right home zone to begin each trial.</p>
-            <p>4. Tap the red <strong>TARGET</strong> as <strong>quickly and accurately as possible</strong>.</p>
-            <p>Total Trials: <strong>108</strong> (9 conditions × 12 repetitions)</p>
+
+        <h2 id="overlay-title">
+            Right-Handed Thumb Experiment
+        </h2>
+
+        <div id="overlay-body"
+             class="instructions">
+
+            <p>
+                <strong>Experimental Protocol:</strong>
+            </p>
+
+            <p>
+                1. Hold your phone using
+                <strong>only your right hand</strong>
+                (one-handed shelf grip).
+            </p>
+
+            <p>
+                2. Perform all interactions using
+                <strong>only your right thumb</strong>.
+            </p>
+
+            <p>
+                3. Tap the green
+                <strong>START</strong>
+                button in the bottom-right home zone
+                to begin each trial.
+            </p>
+
+            <p>
+                4. Tap the red
+                <strong>TARGET</strong>
+                as
+                <strong>quickly and accurately as possible</strong>.
+            </p>
+
+            <p>
+                Total Trials:
+                <strong>108</strong>
+                (9 conditions × 12 repetitions)
+            </p>
+
         </div>
-        <button id="begin-exp-btn" class="btn-ui">Begin Experiment</button>
-        <button id="download-csv-btn" class="btn-ui" style="background-color:#29b6f6; display:none;">Download CSV Data</button>
+
+        <button id="begin-exp-btn"
+                class="btn-ui">
+            Begin Experiment
+        </button>
+
+        <button id="download-csv-btn"
+                class="btn-ui"
+                style="background-color:#29b6f6; display:none;">
+            Download CSV Data
+        </button>
+
     </div>
+
 </div>
 
+
 <script>
+
     /*
+     * ============================================================
      * EXPERIMENT CONFIGURATION
+     * ============================================================
      */
+
     const distances = [140, 280, 420];
+
     const widths = [36, 60, 84];
+
     const trialsPerCondition = 12;
 
+    const totalTrials =
+        distances.length *
+        widths.length *
+        trialsPerCondition;
+
+
     /*
+     * ============================================================
      * EXPERIMENT STATE
+     * ============================================================
      */
+
     let conditions = [];
+
     let currentTrialIndex = 0;
+
     let startTime = 0;
+
     let trialActive = false;
+
     let trialData = [];
+
     let missCount = 0;
 
+
     /*
+     * ============================================================
      * HTML ELEMENTS
+     * ============================================================
      */
-    const startBtn = document.getElementById('start-btn');
-    const actionTarget = document.getElementById('action-target');
-    const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayBody = document.getElementById('overlay-body');
-    const beginExpBtn = document.getElementById('begin-exp-btn');
-    const downloadCsvBtn = document.getElementById('download-csv-btn');
-    const trialCountEl = document.getElementById('trial-count');
-    const feedbackFlash = document.getElementById('feedback-flash');
-    const canvas = document.getElementById('canvas-container');
+
+    const startBtn =
+        document.getElementById('start-btn');
+
+    const actionTarget =
+        document.getElementById('action-target');
+
+    const overlay =
+        document.getElementById('overlay');
+
+    const overlayTitle =
+        document.getElementById('overlay-title');
+
+    const overlayBody =
+        document.getElementById('overlay-body');
+
+    const beginExpBtn =
+        document.getElementById('begin-exp-btn');
+
+    const downloadCsvBtn =
+        document.getElementById('download-csv-btn');
+
+    const trialCountEl =
+        document.getElementById('trial-count');
+
+    const feedbackFlash =
+        document.getElementById('feedback-flash');
+
+    const canvas =
+        document.getElementById('canvas-container');
+
 
     /*
+     * ============================================================
+     * CALCULATE FITTS' LAW ID
+     *
+     * Shannon formulation:
+     *
+     * ID = log2(A / W + 1)
+     *
+     * A = target distance
+     * W = target width
+     * ============================================================
+     */
+
+    function calculateID(A, W) {
+
+        return Math.log2(A / W + 1);
+
+    }
+
+
+    /*
+     * ============================================================
      * GENERATE BALANCED & RANDOMIZED TRIAL ORDER
+     * ============================================================
      */
+
     function generateConditions() {
+
         let condList = [];
+
         for (let a of distances) {
+
             for (let w of widths) {
-                for (let i = 0; i < trialsPerCondition; i++) {
-                    condList.push({ A: a, W: w });
+
+                for (let i = 0;
+                     i < trialsPerCondition;
+                     i++) {
+
+                    condList.push({
+                        A: a,
+                        W: w
+                    });
+
                 }
+
             }
+
         }
-        // Fisher-Yates Shuffle
-        for (let i = condList.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [condList[i], condList[j]] = [condList[j], condList[i]];
+
+        /*
+         * Fisher-Yates Shuffle
+         */
+
+        for (let i = condList.length - 1;
+             i > 0;
+             i--) {
+
+            const j =
+                Math.floor(
+                    Math.random() * (i + 1)
+                );
+
+            [
+                condList[i],
+                condList[j]
+            ] =
+            [
+                condList[j],
+                condList[i]
+            ];
+
         }
+
         return condList;
+
     }
 
+
     /*
+     * ============================================================
      * INITIALIZE EXPERIMENT
+     * ============================================================
      */
+
     function initExperiment() {
-        conditions = generateConditions();
+
+        conditions =
+            generateConditions();
+
         currentTrialIndex = 0;
+
         trialData = [];
+
         trialCountEl.textContent = '0';
+
         overlay.style.display = 'none';
+
         setupStartButton();
+
     }
 
+
     /*
-     * POSITION START BUTTON (HOME REST ZONE - BOTTOM RIGHT)
+     * ============================================================
+     * POSITION START BUTTON
+     *
+     * Bottom-right home/rest zone.
+     *
+     * Extra bottom safety area is used so that the target
+     * does not appear too close to browser/navigation controls.
+     * ============================================================
      */
+
     function setupStartButton() {
+
         const startSize = 64;
-        const rect = canvas.getBoundingClientRect();
-        const left = rect.width - startSize - 25;
-        const top = rect.height - startSize - 35;
 
-        startBtn.style.width = `${startSize}px`;
-        startBtn.style.height = `${startSize}px`;
-        startBtn.style.left = `${left}px`;
-        startBtn.style.top = `${top}px`;
-        startBtn.style.display = 'flex';
+        const rect =
+            canvas.getBoundingClientRect();
 
-        actionTarget.style.display = 'none';
+        const left =
+            rect.width -
+            startSize -
+            25;
+
+        /*
+         * Move START slightly higher.
+         */
+
+        const top =
+            rect.height -
+            startSize -
+            70;
+
+
+        startBtn.style.width =
+            `${startSize}px`;
+
+        startBtn.style.height =
+            `${startSize}px`;
+
+        startBtn.style.left =
+            `${left}px`;
+
+        startBtn.style.top =
+            `${top}px`;
+
+        startBtn.style.display =
+            'flex';
+
+        actionTarget.style.display =
+            'none';
+
         trialActive = false;
+
     }
 
-    /*
-     * FIND VALID TARGET POSITION
-     * Ensures target stays on screen while preserving distance A
-     */
-    function findValidTargetPosition(startCenterX, startCenterY, A, W) {
-        const rect = canvas.getBoundingClientRect();
-        const radius = W / 2;
-        const padding = 5;
 
-        const minX = radius + padding;
-        const maxX = rect.width - radius - padding;
-        const minY = radius + padding;
-        const maxY = rect.height - radius - padding;
+    /*
+     * ============================================================
+     * FIND VALID TARGET POSITION
+     *
+     * IMPORTANT:
+     *
+     * The target is placed at EXACTLY distance A from the
+     * center of the START button.
+     *
+     * The code does NOT move/clamp the target after calculating
+     * its position.
+     *
+     * If no position can satisfy both:
+     *
+     * 1. exact distance A
+     * 2. safe screen boundaries
+     *
+     * the trial cannot start.
+     * ============================================================
+     */
+
+    function findValidTargetPosition(
+        startCenterX,
+        startCenterY,
+        A,
+        W
+    ) {
+
+        const rect =
+            canvas.getBoundingClientRect();
+
+        const radius =
+            W / 2;
+
+
+        /*
+         * Horizontal safety margin.
+         */
+
+        const horizontalPadding = 5;
+
+
+        /*
+         * Top safety margin.
+         */
+
+        const topPadding = 5;
+
+
+        /*
+         * Bottom safe area.
+         *
+         * This keeps the target away from the bottom
+         * browser/navigation area.
+         */
+
+        const bottomSafeArea = 60;
+
+
+        const minX =
+            radius +
+            horizontalPadding;
+
+        const maxX =
+            rect.width -
+            radius -
+            horizontalPadding;
+
+
+        const minY =
+            radius +
+            topPadding;
+
+        const maxY =
+            rect.height -
+            radius -
+            bottomSafeArea;
+
+
+        /*
+         * Search around a complete circle.
+         *
+         * Every candidate has exactly distance A.
+         */
 
         const numberOfAngles = 360;
+
         let validPositions = [];
 
-        for (let i = 0; i < numberOfAngles; i++) {
-            const angle = (2 * Math.PI * i) / numberOfAngles;
-            const x = startCenterX + A * Math.cos(angle);
-            const y = startCenterY + A * Math.sin(angle);
 
-            if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
-                validPositions.push({ x: x, y: y });
+        for (
+            let i = 0;
+            i < numberOfAngles;
+            i++
+        ) {
+
+            const angle =
+                (2 * Math.PI * i) /
+                numberOfAngles;
+
+
+            const x =
+                startCenterX +
+                A * Math.cos(angle);
+
+
+            const y =
+                startCenterY +
+                A * Math.sin(angle);
+
+
+            /*
+             * Keep only positions that fit
+             * completely inside the safe area.
+             */
+
+            if (
+                x >= minX &&
+                x <= maxX &&
+                y >= minY &&
+                y <= maxY
+            ) {
+
+                validPositions.push({
+                    x: x,
+                    y: y
+                });
+
             }
+
         }
 
-        if (validPositions.length === 0) return null;
-        return validPositions[Math.floor(Math.random() * validPositions.length)];
+
+        /*
+         * If no valid position exists,
+         * return null instead of changing A.
+         */
+
+        if (
+            validPositions.length === 0
+        ) {
+
+            return null;
+
+        }
+
+
+        /*
+         * Randomly select one valid direction.
+         */
+
+        return validPositions[
+            Math.floor(
+                Math.random() *
+                validPositions.length
+            )
+        ];
+
     }
 
+
     /*
+     * ============================================================
      * PREPARE AND SHOW TARGET
+     * ============================================================
      */
+
     function prepareTarget() {
-        const currentCond = conditions[currentTrialIndex];
-        const A = currentCond.A;
-        const W = currentCond.W;
 
-        const startRect = startBtn.getBoundingClientRect();
-        const canvasRect = canvas.getBoundingClientRect();
+        const currentCond =
+            conditions[currentTrialIndex];
 
-        const startCenterX = (startRect.left + startRect.width / 2) - canvasRect.left;
-        const startCenterY = (startRect.top + startRect.height / 2) - canvasRect.top;
 
-        const targetPosition = findValidTargetPosition(startCenterX, startCenterY, A, W);
+        const A =
+            currentCond.A;
+
+        const W =
+            currentCond.W;
+
+
+        const startRect =
+            startBtn.getBoundingClientRect();
+
+        const canvasRect =
+            canvas.getBoundingClientRect();
+
+
+        /*
+         * Calculate START center relative to canvas.
+         */
+
+        const startCenterX =
+            (
+                startRect.left +
+                startRect.width / 2
+            ) -
+            canvasRect.left;
+
+
+        const startCenterY =
+            (
+                startRect.top +
+                startRect.height / 2
+            ) -
+            canvasRect.top;
+
+
+        /*
+         * Find a target position that preserves
+         * exact distance A.
+         */
+
+        const targetPosition =
+            findValidTargetPosition(
+                startCenterX,
+                startCenterY,
+                A,
+                W
+            );
+
+
+        /*
+         * If A cannot fit safely on the current screen,
+         * stop rather than changing A.
+         */
 
         if (!targetPosition) {
-            alert("This distance and target size cannot fit on this screen. Please use a larger screen.");
+
+            alert(
+                "This distance and target size cannot fit safely on this screen. " +
+                "Please use a larger screen or adjust the experimental distances."
+            );
+
             return;
+
         }
 
-        actionTarget.style.width = `${W}px`;
-        actionTarget.style.height = `${W}px`;
-        actionTarget.style.left = `${targetPosition.x - W / 2}px`;
-        actionTarget.style.top = `${targetPosition.y - W / 2}px`;
 
-        startBtn.style.display = 'none';
-        actionTarget.style.display = 'flex';
+        /*
+         * Set target size.
+         */
+
+        actionTarget.style.width =
+            `${W}px`;
+
+        actionTarget.style.height =
+            `${W}px`;
+
+
+        /*
+         * Set target position.
+         */
+
+        actionTarget.style.left =
+            `${targetPosition.x - W / 2}px`;
+
+        actionTarget.style.top =
+            `${targetPosition.y - W / 2}px`;
+
+
+        /*
+         * Hide START.
+         */
+
+        startBtn.style.display =
+            'none';
+
+
+        /*
+         * Show target.
+         */
+
+        actionTarget.style.display =
+            'flex';
+
+
+        /*
+         * Reset miss counter.
+         */
 
         missCount = 0;
-        startTime = performance.now();
+
+
+        /*
+         * Start timing immediately after
+         * target becomes visible.
+         */
+
+        startTime =
+            performance.now();
+
+
         trialActive = true;
+
     }
 
+
     /*
+     * ============================================================
      * VISUAL FEEDBACK
+     * ============================================================
      */
+
     function triggerFeedback(isHit) {
-        feedbackFlash.className = isHit ? 'hit' : 'miss';
-        setTimeout(() => { feedbackFlash.className = ''; }, 150);
+
+        feedbackFlash.className =
+            isHit ? 'hit' : 'miss';
+
+
+        setTimeout(
+            () => {
+                feedbackFlash.className = '';
+            },
+            150
+        );
+
     }
 
+
     /*
+     * ============================================================
      * HANDLE START PRESS
+     * ============================================================
      */
+
     function handleStartPress(e) {
+
         e.preventDefault();
+
         e.stopPropagation();
+
         prepareTarget();
+
     }
 
+
     /*
+     * ============================================================
      * HANDLE TARGET PRESS
+     * ============================================================
      */
+
     function handleTargetPress(e) {
+
         e.preventDefault();
+
         e.stopPropagation();
-        if (!trialActive) return;
 
-        const endTime = performance.now();
-        const movementTime = Math.round(endTime - startTime);
-        const currentCond = conditions[currentTrialIndex];
-        const A = currentCond.A;
-        const W = currentCond.W;
 
-        // Shannon Formulation: ID = log2(A / W + 1) using fixed distance A
-        const idBits = Math.log2(A / W + 1);
+        if (!trialActive) {
+
+            return;
+
+        }
+
+
+        /*
+         * End timing immediately when the target is successfully
+         * tapped.
+         */
+
+        const endTime =
+            performance.now();
+
+
+        const movementTime =
+            Math.round(
+                endTime - startTime
+            );
+
+
+        const currentCond =
+            conditions[currentTrialIndex];
+
+
+        const A =
+            currentCond.A;
+
+        const W =
+            currentCond.W;
+
+
+        /*
+         * Calculate exact theoretical ID.
+         *
+         * Do NOT use rounded ID for the internal calculation.
+         */
+
+        const idBits =
+            calculateID(A, W);
+
+
+        /*
+         * Store raw trial data.
+         *
+         * ID is stored to 6 decimal places in the CSV.
+         *
+         * This is enough precision for reproducing
+         * the analysis.
+         */
 
         trialData.push({
-            trial: currentTrialIndex + 1,
-            distance_A: A,
-            width_W: W,
-            id_bits: parseFloat(idBits.toFixed(3)),
-            movement_time_ms: movementTime,
-            errors: missCount
+
+            trial:
+                currentTrialIndex + 1,
+
+            distance_A:
+                A,
+
+            width_W:
+                W,
+
+            id_bits:
+                parseFloat(
+                    idBits.toFixed(6)
+                ),
+
+            movement_time_ms:
+                movementTime,
+
+            errors:
+                missCount
+
         });
+
+
+        /*
+         * Show successful-hit feedback.
+         */
 
         triggerFeedback(true);
+
+
+        /*
+         * Move to next trial.
+         */
+
         currentTrialIndex++;
-        trialCountEl.textContent = currentTrialIndex;
 
-        if (currentTrialIndex < conditions.length) {
+
+        trialCountEl.textContent =
+            currentTrialIndex;
+
+
+        /*
+         * Continue experiment.
+         */
+
+        if (
+            currentTrialIndex <
+            conditions.length
+        ) {
+
             setupStartButton();
-        } else {
+
+        }
+
+        /*
+         * Finish experiment.
+         */
+
+        else {
+
             endExperiment();
+
         }
+
     }
 
+
     /*
+     * ============================================================
      * MISS DETECTION
+     *
+     * A miss is counted when the participant taps the canvas
+     * instead of successfully tapping the target.
+     * ============================================================
      */
+
     function handleCanvasMiss(e) {
-        if (!trialActive) return;
-        if (e.target === canvas || e.target === feedbackFlash) {
-            missCount++;
-            triggerFeedback(false);
+
+        if (!trialActive) {
+
+            return;
+
         }
+
+
+        if (
+            e.target === canvas ||
+            e.target === feedbackFlash
+        ) {
+
+            missCount++;
+
+            triggerFeedback(false);
+
+        }
+
     }
 
+
     /*
+     * ============================================================
      * END EXPERIMENT AND SHOW SUMMARY
+     * ============================================================
      */
+
     function endExperiment() {
+
         trialActive = false;
-        actionTarget.style.display = 'none';
-        startBtn.style.display = 'none';
 
-        const totalMT = trialData.reduce((acc, row) => acc + row.movement_time_ms, 0);
-        const avgMT = Math.round(totalMT / trialData.length);
-        const totalErrors = trialData.reduce((acc, row) => acc + (row.errors > 0 ? 1 : 0), 0);
-        const errorRate = ((totalErrors / trialData.length) * 100).toFixed(1);
+        actionTarget.style.display =
+            'none';
 
-        // Group by condition key: "A_W"
+        startBtn.style.display =
+            'none';
+
+
+        /*
+         * Overall mean movement time.
+         */
+
+        const totalMT =
+            trialData.reduce(
+                (acc, row) =>
+                    acc +
+                    row.movement_time_ms,
+                0
+            );
+
+
+        const avgMT =
+            totalMT /
+            trialData.length;
+
+
+        /*
+         * Count trials with at least one error.
+         */
+
+        const totalErrors =
+            trialData.reduce(
+                (acc, row) =>
+                    acc +
+                    (row.errors > 0 ? 1 : 0),
+                0
+            );
+
+
+        const errorRate =
+            (
+                totalErrors /
+                trialData.length
+            ) * 100;
+
+
+        /*
+         * ========================================================
+         * GROUP TRIALS BY CONDITION
+         *
+         * IMPORTANT:
+         *
+         * Conditions are grouped using A and W.
+         * ID is recalculated from A and W.
+         *
+         * This prevents rounded CSV ID values from affecting
+         * the condition-level analysis.
+         * ========================================================
+         */
+
         let conditionGroups = {};
+
+
         trialData.forEach(row => {
-            const key = `${row.distance_A}_${row.width_W}`;
-            if (!conditionGroups[key]) {
+
+            const key =
+                `${row.distance_A}_${row.width_W}`;
+
+
+            if (
+                !conditionGroups[key]
+            ) {
+
                 conditionGroups[key] = {
-                    A: row.distance_A,
-                    W: row.width_W,
-                    ID: row.id_bits,
-                    times: []
+
+                    A:
+                        row.distance_A,
+
+                    W:
+                        row.width_W,
+
+                    times:
+                        []
+
                 };
+
             }
-            conditionGroups[key].times.push(row.movement_time_ms);
+
+
+            conditionGroups[key].times.push(
+                row.movement_time_ms
+            );
+
         });
 
-        // Sort by ID
-        let sortedKeys = Object.keys(conditionGroups).sort((a, b) => conditionGroups[a].ID - conditionGroups[b].ID);
+
+        /*
+         * ========================================================
+         * CREATE 9 CONDITION DATA POINTS
+         * ========================================================
+         */
+
+        let conditionResults = [];
+
+
+        Object.keys(conditionGroups)
+            .forEach(key => {
+
+                const group =
+                    conditionGroups[key];
+
+
+                /*
+                 * Calculate exact ID from A and W.
+                 */
+
+                const exactID =
+                    calculateID(
+                        group.A,
+                        group.W
+                    );
+
+
+                /*
+                 * Calculate the mean MT using all
+                 * 12 repetitions.
+                 *
+                 * Do NOT round before regression.
+                 */
+
+                const meanMT =
+                    group.times.reduce(
+                        (a, b) =>
+                            a + b,
+                        0
+                    ) /
+                    group.times.length;
+
+
+                conditionResults.push({
+
+                    A:
+                        group.A,
+
+                    W:
+                        group.W,
+
+                    ID:
+                        exactID,
+
+                    meanMT:
+                        meanMT,
+
+                    reps:
+                        group.times.length
+
+                });
+
+            });
+
+
+        /*
+         * Sort by ID.
+         */
+
+        conditionResults.sort(
+            (a, b) =>
+                a.ID - b.ID
+        );
+
+
+        /*
+         * ========================================================
+         * CALCULATE REGRESSION FROM THE 9 CONDITION MEANS
+         *
+         * MT = a + b(ID)
+         * ========================================================
+         */
+
+        const regression =
+            calculateRegression(
+                conditionResults
+            );
+
+
+        /*
+         * ========================================================
+         * CREATE TABLE
+         * ========================================================
+         */
+
         let tableRows = '';
 
-        sortedKeys.forEach(key => {
-            const group = conditionGroups[key];
-            const avgTime = Math.round(group.times.reduce((a, b) => a + b, 0) / group.times.length);
 
-            tableRows += `
-                <tr>
-                    <td>${group.A}px</td>
-                    <td>${group.W}px</td>
-                    <td>${group.ID.toFixed(2)} bits</td>
-                    <td>${avgTime} ms</td>
-                    <td>${group.times.length}</td>
-                </tr>
-            `;
-        });
+        conditionResults.forEach(
+            group => {
 
-        overlayTitle.textContent = 'Experiment Results';
+                tableRows += `
+
+                    <tr>
+
+                        <td>
+                            ${group.A}px
+                        </td>
+
+                        <td>
+                            ${group.W}px
+                        </td>
+
+                        <td>
+                            ${group.ID.toFixed(3)} bits
+                        </td>
+
+                        <td>
+                            ${group.meanMT.toFixed(2)} ms
+                        </td>
+
+                        <td>
+                            ${group.reps}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+
+        /*
+         * ========================================================
+         * SHOW RESULTS
+         * ========================================================
+         */
+
+        overlayTitle.textContent =
+            'Experiment Results';
+
+
         overlayBody.innerHTML = `
+
             <div class="metrics-grid">
+
                 <div class="metric-box">
-                    <div class="metric-val">${avgMT} ms</div>
-                    <div class="metric-lbl">Mean MT</div>
+
+                    <div class="metric-val">
+                        ${avgMT.toFixed(2)} ms
+                    </div>
+
+                    <div class="metric-lbl">
+                        Overall Mean MT
+                    </div>
+
                 </div>
+
+
                 <div class="metric-box">
-                    <div class="metric-val">${errorRate}%</div>
-                    <div class="metric-lbl">Error Rate</div>
+
+                    <div class="metric-val">
+                        ${errorRate.toFixed(1)}%
+                    </div>
+
+                    <div class="metric-lbl">
+                        Error Rate
+                    </div>
+
                 </div>
+
+
                 <div class="metric-box">
-                    <div class="metric-val">${trialData.length}</div>
-                    <div class="metric-lbl">Trials</div>
+
+                    <div class="metric-val">
+                        ${trialData.length}
+                    </div>
+
+                    <div class="metric-lbl">
+                        Trials
+                    </div>
+
                 </div>
+
             </div>
 
-            <p><strong>Condition Summary (A, W, ID vs MT):</strong></p>
+
+            <p>
+                <strong>
+                    Condition Summary (A, W, ID vs MT):
+                </strong>
+            </p>
+
+
             <table>
+
                 <thead>
+
                     <tr>
+
                         <th>A</th>
+
                         <th>W</th>
+
                         <th>ID</th>
+
                         <th>Mean MT</th>
+
                         <th>Reps</th>
+
                     </tr>
+
                 </thead>
+
+
                 <tbody>
+
                     ${tableRows}
+
                 </tbody>
+
             </table>
+
+
+            <div class="regression-box">
+
+                <strong>
+                    Fitts' Law Regression
+                </strong>
+
+                <br>
+
+                MT =
+                ${regression.slope.toFixed(2)}
+                × ID +
+                ${regression.intercept.toFixed(2)}
+
+                <br>
+
+                R² =
+                ${regression.rSquared.toFixed(4)}
+
+                <br>
+
+                Based on
+                <strong>9 condition means</strong>.
+
+            </div>
+
         `;
 
-        beginExpBtn.textContent = 'Restart Test';
-        downloadCsvBtn.style.display = 'block';
-        overlay.style.display = 'flex';
+
+        /*
+         * Change button text.
+         */
+
+        beginExpBtn.textContent =
+            'Restart Test';
+
+
+        /*
+         * Show download button.
+         */
+
+        downloadCsvBtn.style.display =
+            'block';
+
+
+        /*
+         * Show result overlay.
+         */
+
+        overlay.style.display =
+            'flex';
+
     }
 
+
     /*
-     * DOWNLOAD CLEAN CSV DATA
+     * ============================================================
+     * LINEAR REGRESSION
+     *
+     * x = ID
+     * y = Mean Movement Time
+     *
+     * Model:
+     *
+     * MT = a + b(ID)
+     * ============================================================
      */
+
+    function calculateRegression(
+        results
+    ) {
+
+        const n =
+            results.length;
+
+
+        /*
+         * Extract X and Y.
+         */
+
+        const x =
+            results.map(
+                row => row.ID
+            );
+
+
+        const y =
+            results.map(
+                row => row.meanMT
+            );
+
+
+        /*
+         * Calculate means.
+         */
+
+        const meanX =
+            x.reduce(
+                (a, b) => a + b,
+                0
+            ) / n;
+
+
+        const meanY =
+            y.reduce(
+                (a, b) => a + b,
+                0
+            ) / n;
+
+
+        /*
+         * Calculate slope.
+         *
+         * b =
+         * Σ[(x - meanX)(y - meanY)]
+         * /
+         * Σ[(x - meanX)^2]
+         */
+
+        let numerator = 0;
+
+        let denominator = 0;
+
+
+        for (
+            let i = 0;
+            i < n;
+            i++
+        ) {
+
+            numerator +=
+                (x[i] - meanX) *
+                (y[i] - meanY);
+
+
+            denominator +=
+                Math.pow(
+                    x[i] - meanX,
+                    2
+                );
+
+        }
+
+
+        const slope =
+            numerator /
+            denominator;
+
+
+        /*
+         * Calculate intercept.
+         *
+         * a = meanY - b(meanX)
+         */
+
+        const intercept =
+            meanY -
+            slope * meanX;
+
+
+        /*
+         * Calculate R².
+         */
+
+        let ssTotal = 0;
+
+        let ssResidual = 0;
+
+
+        for (
+            let i = 0;
+            i < n;
+            i++
+        ) {
+
+            const predicted =
+                intercept +
+                slope * x[i];
+
+
+            ssTotal +=
+                Math.pow(
+                    y[i] - meanY,
+                    2
+                );
+
+
+            ssResidual +=
+                Math.pow(
+                    y[i] - predicted,
+                    2
+                );
+
+        }
+
+
+        const rSquared =
+            1 -
+            (
+                ssResidual /
+                ssTotal
+            );
+
+
+        return {
+
+            slope:
+                slope,
+
+            intercept:
+                intercept,
+
+            rSquared:
+                rSquared
+
+        };
+
+    }
+
+
+    /*
+     * ============================================================
+     * DOWNLOAD CLEAN CSV DATA
+     *
+     * The CSV contains ALL 108 individual trials.
+     *
+     * ID is stored to 6 decimal places.
+     * ============================================================
+     */
+
     function downloadCSV() {
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Trial,Distance_A,Width_W,ID_bits,MovementTime_ms,Errors\n";
+
+        let csvContent =
+            "data:text/csv;charset=utf-8,";
+
+
+        csvContent +=
+            "Trial,Distance_A,Width_W,ID_bits,MovementTime_ms,Errors\n";
+
 
         trialData.forEach(row => {
-            csvContent += `${row.trial},${row.distance_A},${row.width_W},${row.id_bits},${row.movement_time_ms},${row.errors}\n`;
+
+            csvContent +=
+
+                `${row.trial},` +
+
+                `${row.distance_A},` +
+
+                `${row.width_W},` +
+
+                `${row.id_bits.toFixed(6)},` +
+
+                `${row.movement_time_ms},` +
+
+                `${row.errors}\n`;
+
         });
 
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `fitts_law_thumb_data_${Date.now()}.csv`);
+
+        const encodedUri =
+            encodeURI(csvContent);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.setAttribute(
+            "href",
+            encodedUri
+        );
+
+
+        link.setAttribute(
+            "download",
+            `fitts_law_thumb_data_${Date.now()}.csv`
+        );
+
+
         document.body.appendChild(link);
+
+
         link.click();
+
+
         document.body.removeChild(link);
+
     }
 
+
     /*
+     * ============================================================
      * EVENT LISTENERS
+     * ============================================================
      */
-    startBtn.addEventListener('pointerdown', handleStartPress);
-    actionTarget.addEventListener('pointerdown', handleTargetPress);
-    canvas.addEventListener('pointerdown', handleCanvasMiss);
-    beginExpBtn.addEventListener('click', initExperiment);
-    downloadCsvBtn.addEventListener('click', downloadCSV);
+
+    startBtn.addEventListener(
+        'pointerdown',
+        handleStartPress
+    );
+
+
+    actionTarget.addEventListener(
+        'pointerdown',
+        handleTargetPress
+    );
+
+
+    canvas.addEventListener(
+        'pointerdown',
+        handleCanvasMiss
+    );
+
+
+    beginExpBtn.addEventListener(
+        'click',
+        initExperiment
+    );
+
+
+    downloadCsvBtn.addEventListener(
+        'click',
+        downloadCSV
+    );
+
 </script>
 
 </body>

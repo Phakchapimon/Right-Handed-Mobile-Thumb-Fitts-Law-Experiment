@@ -1,15 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Right-Handed Mobile Thumb Fitts' Law Experiment</title>
-
     <style>
         * {
             box-sizing: border-box;
@@ -17,1731 +11,535 @@
             -webkit-user-select: none;
             touch-action: manipulation;
         }
-
         body {
             margin: 0;
             padding: 0;
             background-color: #121212;
             color: #ffffff;
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Roboto,
-                Arial,
-                sans-serif;
-
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-
             min-height: 100vh;
             overflow: hidden;
         }
-
         #phone-frame {
             width: 100vw;
             height: 100vh;
-
             max-width: 420px;
             max-height: 850px;
-
             background-color: #1e1e1e;
-
             border: 2px solid #333;
             border-radius: 20px;
-
             display: flex;
             flex-direction: column;
-
             position: relative;
-
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             overflow: hidden;
         }
-
         header {
-            height: 65px;
-
+            padding: 12px;
             background-color: #252525;
-
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
             border-bottom: 1px solid #333;
-
-            flex-shrink: 0;
+            text-align: center;
         }
-
-        header h1 {
+        h1 {
             margin: 0;
-
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 1.1rem;
+            color: #00e676;
         }
-
         #stats {
-            margin-top: 5px;
-
-            font-size: 13px;
-
-            color: #aaaaaa;
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-top: 4px;
         }
-
         #canvas-container {
-            position: relative;
-
             flex: 1;
-
-            overflow: hidden;
-
+            position: relative;
+            width: 100%;
+            height: 100%;
             background-color: #181818;
         }
-
         .target {
             position: absolute;
-
+            border-radius: 50%;
             display: flex;
-
             justify-content: center;
             align-items: center;
-
-            border-radius: 50%;
-
             font-weight: bold;
-
+            font-size: 0.8rem;
             cursor: pointer;
-
-            touch-action: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            touch-action: manipulation;
         }
-
+        .target:active {
+            transform: scale(0.95);
+        }
         #start-btn {
-            background-color: #28a745;
-
-            color: white;
-
-            font-size: 12px;
-
-            box-shadow:
-                0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        #action-target {
-            background-color: #e53935;
-
-            color: white;
-
-            font-size: 10px;
-
-            box-shadow:
-                0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-
-        #feedback-flash {
-            position: absolute;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            pointer-events: none;
-
-            opacity: 0;
-
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #000;
             z-index: 10;
         }
-
-        #feedback-flash.hit {
-            background-color: rgba(76, 175, 80, 0.15);
-
-            opacity: 1;
+        #action-target {
+            background: linear-gradient(135deg, #ff3d00, #ff6e40);
+            color: #fff;
+            z-index: 20;
         }
-
-        #feedback-flash.miss {
-            background-color: rgba(244, 67, 54, 0.15);
-
-            opacity: 1;
-        }
-
         #overlay {
             position: absolute;
-
             top: 0;
             left: 0;
-
             width: 100%;
             height: 100%;
-
-            background-color: rgba(18, 18, 18, 0.97);
-
-            z-index: 20;
-
+            background-color: rgba(18, 18, 18, 0.98);
             display: flex;
-
             flex-direction: column;
-
-            justify-content: center;
-
+            justify-content: flex-start;
             align-items: center;
-
-            padding: 25px;
-
+            padding: 20px;
             text-align: center;
-
+            z-index: 100;
             overflow-y: auto;
         }
-
-        #overlay h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-
-            font-size: 22px;
-        }
-
-        #overlay-body {
-            width: 100%;
-            max-width: 380px;
-        }
-
         .instructions {
-            font-size: 14px;
-
-            line-height: 1.6;
-
-            color: #dddddd;
-
-            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #ccc;
+            margin-bottom: 12px;
         }
-
-        .instructions p {
+        .btn-ui {
+            background-color: #00e676;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 230, 118, 0.3);
+            margin: 6px 0;
+            width: 85%;
+            flex-shrink: 0;
+        }
+        #feedback-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s ease-out;
+            z-index: 50;
+        }
+        .hit {
+            background-color: rgba(0, 230, 118, 0.15);
+            opacity: 1 !important;
+        }
+        .miss {
+            background-color: rgba(255, 23, 68, 0.25);
+            opacity: 1 !important;
+        }
+        .metrics-grid {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
             margin: 8px 0;
         }
-
-        .btn-ui {
-            margin-top: 20px;
-
-            padding: 12px 25px;
-
-            border: none;
+        .metric-box {
+            background: #2a2a2a;
+            padding: 8px;
             border-radius: 8px;
-
-            background-color: #28a745;
-
-            color: white;
-
-            font-size: 15px;
-            font-weight: 600;
-
-            cursor: pointer;
+            width: 30%;
         }
-
-        .btn-ui:active {
-            transform: scale(0.97);
+        .metric-val {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #00e676;
         }
-
-        .results-container {
-            width: 100%;
-
-            overflow-x: auto;
-
-            margin-top: 10px;
+        .metric-lbl {
+            font-size: 0.7rem;
+            color: #aaa;
         }
-
         table {
             width: 100%;
-
             border-collapse: collapse;
-
-            font-size: 11px;
-        }
-
-        th,
-        td {
-            padding: 7px 4px;
-
-            border: 1px solid #444;
-
-            text-align: center;
-        }
-
-        th {
-            background-color: #303030;
-            color: #ffffff;
-        }
-
-        td {
-            background-color: #202020;
-            color: #dddddd;
-        }
-
-        .summary-box {
-            margin-top: 15px;
-
-            padding: 12px;
-
-            background-color: #252525;
-
-            border: 1px solid #444;
-
-            border-radius: 8px;
-
-            font-size: 13px;
-
-            line-height: 1.7;
-
-            text-align: left;
-        }
-
-        .regression-box {
-            margin-top: 15px;
-
-            padding: 14px;
-
-            background-color: #202b20;
-
-            border: 1px solid #4caf50;
-
-            border-radius: 8px;
-
-            text-align: left;
-
-            font-size: 13px;
-
-            line-height: 1.7;
-        }
-
-        .regression-equation {
-            font-size: 17px;
-
-            font-weight: bold;
-
-            text-align: center;
-
+            font-size: 0.72rem;
             margin: 8px 0;
+            background: #252525;
+            border-radius: 6px;
+            overflow: hidden;
         }
-
-        .small-note {
-            color: #aaaaaa;
-
-            font-size: 11px;
-
-            line-height: 1.5;
-
-            margin-top: 8px;
+        th, td {
+            padding: 5px 4px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background: #333;
+            color: #00e676;
         }
     </style>
 </head>
-
-
 <body>
 
 <div id="phone-frame">
-
     <header>
-
         <h1>Thumb Fitts' Law Experiment</h1>
-
         <div id="stats">
-            Trial:
-            <span id="trial-count">0</span>
-            /
-            108
+            Trial: <span id="trial-count">0</span> / 108
         </div>
-
     </header>
 
-
     <div id="canvas-container">
-
         <div id="feedback-flash"></div>
-
-        <div
-            id="start-btn"
-            class="target"
-            style="display:none;">
-            START
-        </div>
-
-        <div
-            id="action-target"
-            class="target"
-            style="display:none;">
-            TAP
-        </div>
-
+        <div id="start-btn" class="target" style="display:none;">START</div>
+        <div id="action-target" class="target" style="display:none;">TAP</div>
     </div>
-
 
     <div id="overlay">
-
-        <h2 id="overlay-title">
-            Right-Handed Thumb Experiment
-        </h2>
-
-
-        <div
-            id="overlay-body"
-            class="instructions">
-
-            <p>
-                <strong>Experimental Protocol:</strong>
-            </p>
-
-            <p>
-                1. Hold your phone using
-                <strong>only your right hand</strong>.
-            </p>
-
-            <p>
-                2. Perform all interactions using
-                <strong>only your right thumb</strong>.
-            </p>
-
-            <p>
-                3. Tap the green
-                <strong>START</strong>
-                button in the bottom-right home zone
-                to begin each trial.
-            </p>
-
-            <p>
-                4. Tap the red
-                <strong>TARGET</strong>
-                as
-                <strong>quickly and accurately as possible</strong>.
-            </p>
-
-            <p>
-                Total Trials:
-                <strong>108</strong>
-                (9 conditions × 12 repetitions)
-            </p>
-
+        <h2 id="overlay-title">Right-Handed Thumb Experiment</h2>
+        <div id="overlay-body" class="instructions">
+            <p><strong>Experimental Protocol:</strong></p>
+            <p>1. Hold your phone using <strong>only your right hand</strong> (one-handed shelf grip).</p>
+            <p>2. Perform all interactions using <strong>only your right thumb</strong>.</p>
+            <p>3. Tap the green <strong>START</strong> button in the bottom-right home zone to begin each trial.</p>
+            <p>4. Tap the red <strong>TARGET</strong> as <strong>quickly and accurately as possible</strong>.</p>
+            <p>Total Trials: <strong>108</strong> (9 conditions × 12 repetitions)</p>
         </div>
-
-
-        <button
-            id="begin-exp-btn"
-            class="btn-ui">
-            Begin Experiment
-        </button>
-
-
-        <button
-            id="download-csv-btn"
-            class="btn-ui"
-            style="
-                background-color:#29b6f6;
-                display:none;
-            ">
-            Download CSV Data
-        </button>
-
+        <button id="begin-exp-btn" class="btn-ui">Begin Experiment</button>
+        <button id="download-csv-btn" class="btn-ui" style="background-color:#29b6f6; display:none;">Download CSV Data</button>
     </div>
-
 </div>
 
-
 <script>
+    /*
+     * EXPERIMENT CONFIGURATION
+     */
+    const distances = [140, 280, 420];
+    const widths = [36, 60, 84];
+    const trialsPerCondition = 12;
 
+    /*
+     * EXPERIMENT STATE
+     */
+    let conditions = [];
+    let currentTrialIndex = 0;
+    let startTime = 0;
+    let trialActive = false;
+    let trialData = [];
+    let missCount = 0;
 
-/* =========================================================
-   EXPERIMENT SETTINGS
-   ========================================================= */
+    /*
+     * HTML ELEMENTS
+     */
+    const startBtn = document.getElementById('start-btn');
+    const actionTarget = document.getElementById('action-target');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlay-title');
+    const overlayBody = document.getElementById('overlay-body');
+    const beginExpBtn = document.getElementById('begin-exp-btn');
+    const downloadCsvBtn = document.getElementById('download-csv-btn');
+    const trialCountEl = document.getElementById('trial-count');
+    const feedbackFlash = document.getElementById('feedback-flash');
+    const canvas = document.getElementById('canvas-container');
 
-
-const distances = [140, 280, 420];
-
-const widths = [36, 60, 84];
-
-const trialsPerCondition = 12;
-
-const totalTrials =
-    distances.length *
-    widths.length *
-    trialsPerCondition;
-
-
-/* =========================================================
-   EXPERIMENT VARIABLES
-   ========================================================= */
-
-
-let conditions = [];
-
-let currentTrialIndex = 0;
-
-let startTime = 0;
-
-let trialActive = false;
-
-let trialData = [];
-
-let missCount = 0;
-
-
-/* =========================================================
-   HTML ELEMENTS
-   ========================================================= */
-
-
-const startBtn =
-    document.getElementById("start-btn");
-
-const actionTarget =
-    document.getElementById("action-target");
-
-const overlay =
-    document.getElementById("overlay");
-
-const overlayTitle =
-    document.getElementById("overlay-title");
-
-const overlayBody =
-    document.getElementById("overlay-body");
-
-const beginExpBtn =
-    document.getElementById("begin-exp-btn");
-
-const downloadCsvBtn =
-    document.getElementById("download-csv-btn");
-
-const trialCountEl =
-    document.getElementById("trial-count");
-
-const feedbackFlash =
-    document.getElementById("feedback-flash");
-
-const canvas =
-    document.getElementById("canvas-container");
-
-
-/* =========================================================
-   GENERATE RANDOMIZED CONDITIONS
-   ========================================================= */
-
-
-function generateConditions() {
-
-    let condList = [];
-
-
-    for (let A of distances) {
-
-        for (let W of widths) {
-
-            for (
-                let i = 0;
-                i < trialsPerCondition;
-                i++
-            ) {
-
-                condList.push({
-                    A: A,
-                    W: W
-                });
-
+    /*
+     * GENERATE BALANCED & RANDOMIZED TRIAL ORDER
+     */
+    function generateConditions() {
+        let condList = [];
+        for (let a of distances) {
+            for (let w of widths) {
+                for (let i = 0; i < trialsPerCondition; i++) {
+                    condList.push({ A: a, W: w });
+                }
             }
-
         }
-
-    }
-
-
-    /* Fisher-Yates randomization */
-
-    for (
-        let i = condList.length - 1;
-        i > 0;
-        i--
-    ) {
-
-        const j =
-            Math.floor(
-                Math.random() * (i + 1)
-            );
-
-        [
-            condList[i],
-            condList[j]
-        ] =
-        [
-            condList[j],
-            condList[i]
-        ];
-
-    }
-
-
-    return condList;
-}
-
-
-/* =========================================================
-   INITIALIZE EXPERIMENT
-   ========================================================= */
-
-
-function initExperiment() {
-
-    conditions =
-        generateConditions();
-
-    currentTrialIndex = 0;
-
-    trialData = [];
-
-    trialCountEl.textContent = "0";
-
-    overlay.style.display = "none";
-
-    setupStartButton();
-}
-
-
-/* =========================================================
-   SET START BUTTON POSITION
-   ========================================================= */
-
-
-function setupStartButton() {
-
-    const startSize = 64;
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    const left =
-        rect.width -
-        startSize -
-        25;
-
-
-    /*
-       Keep START further away from the
-       bottom browser / phone controls.
-    */
-
-    const top =
-        rect.height -
-        startSize -
-        70;
-
-
-    startBtn.style.width =
-        `${startSize}px`;
-
-    startBtn.style.height =
-        `${startSize}px`;
-
-    startBtn.style.left =
-        `${left}px`;
-
-    startBtn.style.top =
-        `${top}px`;
-
-    startBtn.style.display =
-        "flex";
-
-
-    actionTarget.style.display =
-        "none";
-
-    trialActive = false;
-}
-
-
-/* =========================================================
-   FIND TARGET POSITION
-   =========================================================
-
-   IMPORTANT:
-   The target is placed exactly A pixels
-   from the START center.
-
-   We do NOT clamp the target position,
-   because that would change the actual
-   experimental Target Distance.
-   ========================================================= */
-
-
-function findValidTargetPosition(
-    startCenterX,
-    startCenterY,
-    A,
-    W
-) {
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    const radius =
-        W / 2;
-
-
-    /*
-       Safe areas.
-
-       The bottom safe area keeps the target
-       away from the bottom browser / phone
-       controls.
-
-       These constraints do NOT change A.
-       They only determine whether a valid
-       position exists.
-    */
-
-    const horizontalPadding = 5;
-
-    const topPadding = 5;
-
-    const bottomSafeArea = 60;
-
-
-    const minX =
-        radius +
-        horizontalPadding;
-
-
-    const maxX =
-        rect.width -
-        radius -
-        horizontalPadding;
-
-
-    const minY =
-        radius +
-        topPadding;
-
-
-    const maxY =
-        rect.height -
-        radius -
-        bottomSafeArea;
-
-
-    /*
-       Check 360 possible directions.
-    */
-
-    const numberOfAngles = 360;
-
-    let validPositions = [];
-
-
-    for (
-        let i = 0;
-        i < numberOfAngles;
-        i++
-    ) {
-
-        const angle =
-            (2 * Math.PI * i) /
-            numberOfAngles;
-
-
-        /*
-           Exact A distance from START.
-        */
-
-        const x =
-            startCenterX +
-            A * Math.cos(angle);
-
-
-        const y =
-            startCenterY +
-            A * Math.sin(angle);
-
-
-        /*
-           Make sure the entire target
-           stays inside the usable screen.
-        */
-
-        if (
-            x >= minX &&
-            x <= maxX &&
-            y >= minY &&
-            y <= maxY
-        ) {
-
-            validPositions.push({
-                x: x,
-                y: y
-            });
-
+        // Fisher-Yates Shuffle
+        for (let i = condList.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [condList[i], condList[j]] = [condList[j], condList[i]];
         }
-
+        return condList;
     }
 
-
     /*
-       If no position is possible,
-       do not change A.
-
-       Instead, return null.
-    */
-
-    if (
-        validPositions.length === 0
-    ) {
-
-        return null;
-
-    }
-
-
-    /*
-       Randomly choose one valid direction.
-    */
-
-    return validPositions[
-        Math.floor(
-            Math.random() *
-            validPositions.length
-        )
-    ];
-}
-
-
-/* =========================================================
-   PREPARE TARGET
-   ========================================================= */
-
-
-function prepareTarget() {
-
-    const currentCond =
-        conditions[currentTrialIndex];
-
-
-    const A =
-        currentCond.A;
-
-    const W =
-        currentCond.W;
-
-
-    const startRect =
-        startBtn.getBoundingClientRect();
-
-
-    const canvasRect =
-        canvas.getBoundingClientRect();
-
-
-    /*
-       START center relative to canvas.
-    */
-
-    const startCenterX =
-        (
-            startRect.left +
-            startRect.width / 2
-        ) -
-        canvasRect.left;
-
-
-    const startCenterY =
-        (
-            startRect.top +
-            startRect.height / 2
-        ) -
-        canvasRect.top;
-
-
-    /*
-       Find a valid target position
-       exactly A pixels away.
-    */
-
-    const targetPosition =
-        findValidTargetPosition(
-            startCenterX,
-            startCenterY,
-            A,
-            W
-        );
-
-
-    /*
-       If the condition cannot fit on
-       the current screen, stop the trial.
-    */
-
-    if (!targetPosition) {
-
-        alert(
-            "This distance and target size cannot fit on this screen. " +
-            "Please use a larger screen or adjust the experiment settings."
-        );
-
-        return;
-
-    }
-
-
-    /*
-       Set target size.
-    */
-
-    actionTarget.style.width =
-        `${W}px`;
-
-    actionTarget.style.height =
-        `${W}px`;
-
-
-    /*
-       Set target position.
-    */
-
-    actionTarget.style.left =
-        `${targetPosition.x - W / 2}px`;
-
-    actionTarget.style.top =
-        `${targetPosition.y - W / 2}px`;
-
-
-    /*
-       Hide START and show TARGET.
-    */
-
-    startBtn.style.display =
-        "none";
-
-    actionTarget.style.display =
-        "flex";
-
-
-    /*
-       Reset error count.
-    */
-
-    missCount = 0;
-
-
-    /*
-       START TIMER.
-
-       The timer begins immediately
-       after the target appears.
-    */
-
-    startTime =
-        performance.now();
-
-
-    trialActive = true;
-}
-
-
-/* =========================================================
-   FEEDBACK
-   ========================================================= */
-
-
-function triggerFeedback(isHit) {
-
-    feedbackFlash.className =
-        isHit ? "hit" : "miss";
-
-
-    setTimeout(
-        () => {
-
-            feedbackFlash.className = "";
-
-        },
-        150
-    );
-}
-
-
-/* =========================================================
-   START BUTTON
-   ========================================================= */
-
-
-function handleStartPress(e) {
-
-    e.preventDefault();
-
-    e.stopPropagation();
-
-
-    prepareTarget();
-}
-
-
-/* =========================================================
-   TARGET PRESS
-   ========================================================= */
-
-
-function handleTargetPress(e) {
-
-    e.preventDefault();
-
-    e.stopPropagation();
-
-
-    if (!trialActive) {
-        return;
-    }
-
-
-    /*
-       END TIMER.
-    */
-
-    const endTime =
-        performance.now();
-
-
-    /*
-       Movement Time in milliseconds.
-    */
-
-    const movementTime =
-        Math.round(
-            endTime -
-            startTime
-        );
-
-
-    const currentCond =
-        conditions[currentTrialIndex];
-
-
-    const A =
-        currentCond.A;
-
-    const W =
-        currentCond.W;
-
-
-    /*
-       Shannon formulation of Fitts' Law:
-
-       ID = log2(A / W + 1)
-    */
-
-    const idBits =
-        Math.log2(
-            A / W + 1
-        );
-
-
-    /*
-       Store RAW TRIAL DATA.
-
-       The ID is stored to 3 decimal places.
-       Movement Time is stored in milliseconds.
-    */
-
-    trialData.push({
-
-        trial:
-            currentTrialIndex + 1,
-
-        distance_A:
-            A,
-
-        width_W:
-            W,
-
-        id_bits:
-            parseFloat(
-                idBits.toFixed(3)
-            ),
-
-        movement_time_ms:
-            movementTime,
-
-        errors:
-            missCount
-
-    });
-
-
-    triggerFeedback(true);
-
-
-    currentTrialIndex++;
-
-
-    trialCountEl.textContent =
-        currentTrialIndex;
-
-
-    /*
-       Continue experiment.
-    */
-
-    if (
-        currentTrialIndex <
-        conditions.length
-    ) {
-
+     * INITIALIZE EXPERIMENT
+     */
+    function initExperiment() {
+        conditions = generateConditions();
+        currentTrialIndex = 0;
+        trialData = [];
+        trialCountEl.textContent = '0';
+        overlay.style.display = 'none';
         setupStartButton();
-
     }
-
-    else {
-
-        endExperiment();
-
-    }
-}
-
-
-/* =========================================================
-   MISSED TARGET
-   ========================================================= */
-
-
-function handleCanvasMiss(e) {
-
-    if (!trialActive) {
-        return;
-    }
-
 
     /*
-       Count a miss only when the user
-       taps the background rather than
-       the target.
-    */
+     * POSITION START BUTTON (HOME REST ZONE - BOTTOM RIGHT)
+     */
+    function setupStartButton() {
+        const startSize = 64;
+        const rect = canvas.getBoundingClientRect();
+        const left = rect.width - startSize - 25;
+        const top = rect.height - startSize - 35;
 
-    if (
-        e.target === canvas ||
-        e.target === feedbackFlash
-    ) {
+        startBtn.style.width = `${startSize}px`;
+        startBtn.style.height = `${startSize}px`;
+        startBtn.style.left = `${left}px`;
+        startBtn.style.top = `${top}px`;
+        startBtn.style.display = 'flex';
 
-        missCount++;
-
-        triggerFeedback(false);
-
+        actionTarget.style.display = 'none';
+        trialActive = false;
     }
-}
 
+    /*
+     * FIND VALID TARGET POSITION
+     * Ensures target stays on screen while preserving distance A
+     */
+    function findValidTargetPosition(startCenterX, startCenterY, A, W) {
+        const rect = canvas.getBoundingClientRect();
+        const radius = W / 2;
+        const padding = 5;
 
-/* =========================================================
-   END EXPERIMENT
-   ========================================================= */
+        const minX = radius + padding;
+        const maxX = rect.width - radius - padding;
+        const minY = radius + padding;
+        const maxY = rect.height - radius - padding;
 
+        const numberOfAngles = 360;
+        let validPositions = [];
 
-function endExperiment() {
+        for (let i = 0; i < numberOfAngles; i++) {
+            const angle = (2 * Math.PI * i) / numberOfAngles;
+            const x = startCenterX + A * Math.cos(angle);
+            const y = startCenterY + A * Math.sin(angle);
 
-    trialActive = false;
-
-
-    actionTarget.style.display =
-        "none";
-
-    startBtn.style.display =
-        "none";
-
-
-    /* =====================================================
-       OVERALL MEAN MOVEMENT TIME
-       ===================================================== */
-
-
-    const totalMT =
-        trialData.reduce(
-            (acc, row) =>
-                acc +
-                row.movement_time_ms,
-            0
-        );
-
-
-    const overallMeanMT =
-        totalMT /
-        trialData.length;
-
-
-    /* =====================================================
-       TOTAL ERRORS
-       ===================================================== */
-
-
-    const totalErrors =
-        trialData.reduce(
-            (acc, row) =>
-                acc +
-                (row.errors > 0 ? 1 : 0),
-            0
-        );
-
-
-    const errorRate =
-        (
-            totalErrors /
-            trialData.length *
-            100
-        ).toFixed(1);
-
-
-    /* =====================================================
-       GROUP 108 TRIALS INTO 9 CONDITIONS
-       ===================================================== */
-
-
-    let conditionGroups = {};
-
-
-    trialData.forEach(row => {
-
-        const key =
-            `${row.distance_A}_${row.width_W}`;
-
-
-        if (
-            !conditionGroups[key]
-        ) {
-
-            conditionGroups[key] = {
-
-                A:
-                    row.distance_A,
-
-                W:
-                    row.width_W,
-
-                ID:
-                    row.id_bits,
-
-                times:
-                    []
-
-            };
-
+            if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+                validPositions.push({ x: x, y: y });
+            }
         }
 
+        if (validPositions.length === 0) return null;
+        return validPositions[Math.floor(Math.random() * validPositions.length)];
+    }
 
-        conditionGroups[key]
-            .times
-            .push(
-                row.movement_time_ms
-            );
+    /*
+     * PREPARE AND SHOW TARGET
+     */
+    function prepareTarget() {
+        const currentCond = conditions[currentTrialIndex];
+        const A = currentCond.A;
+        const W = currentCond.W;
 
-    });
+        const startRect = startBtn.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
 
+        const startCenterX = (startRect.left + startRect.width / 2) - canvasRect.left;
+        const startCenterY = (startRect.top + startRect.height / 2) - canvasRect.top;
 
-    /* =====================================================
-       CALCULATE 9 CONDITION MEANS
-       ===================================================== */
+        const targetPosition = findValidTargetPosition(startCenterX, startCenterY, A, W);
 
+        if (!targetPosition) {
+            alert("This distance and target size cannot fit on this screen. Please use a larger screen.");
+            return;
+        }
 
-    let summaryData = [];
+        actionTarget.style.width = `${W}px`;
+        actionTarget.style.height = `${W}px`;
+        actionTarget.style.left = `${targetPosition.x - W / 2}px`;
+        actionTarget.style.top = `${targetPosition.y - W / 2}px`;
 
+        startBtn.style.display = 'none';
+        actionTarget.style.display = 'flex';
 
-    Object.keys(conditionGroups)
-        .forEach(key => {
+        missCount = 0;
+        startTime = performance.now();
+        trialActive = true;
+    }
 
-            const group =
-                conditionGroups[key];
+    /*
+     * VISUAL FEEDBACK
+     */
+    function triggerFeedback(isHit) {
+        feedbackFlash.className = isHit ? 'hit' : 'miss';
+        setTimeout(() => { feedbackFlash.className = ''; }, 150);
+    }
 
+    /*
+     * HANDLE START PRESS
+     */
+    function handleStartPress(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        prepareTarget();
+    }
 
-            /*
-               IMPORTANT:
+    /*
+     * HANDLE TARGET PRESS
+     */
+    function handleTargetPress(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!trialActive) return;
 
-               Do NOT use Math.round()
-               here.
+        const endTime = performance.now();
+        const movementTime = Math.round(endTime - startTime);
+        const currentCond = conditions[currentTrialIndex];
+        const A = currentCond.A;
+        const W = currentCond.W;
 
-               We keep the complete mean
-               for regression.
-            */
+        // Shannon Formulation: ID = log2(A / W + 1) using fixed distance A
+        const idBits = Math.log2(A / W + 1);
 
-            const meanMT =
-                group.times.reduce(
-                    (a, b) =>
-                        a + b,
-                    0
-                ) /
-                group.times.length;
-
-
-            summaryData.push({
-
-                A:
-                    group.A,
-
-                W:
-                    group.W,
-
-                ID:
-                    group.ID,
-
-                meanMT:
-                    meanMT,
-
-                repetitions:
-                    group.times.length
-
-            });
-
+        trialData.push({
+            trial: currentTrialIndex + 1,
+            distance_A: A,
+            width_W: W,
+            id_bits: parseFloat(idBits.toFixed(3)),
+            movement_time_ms: movementTime,
+            errors: missCount
         });
 
+        triggerFeedback(true);
+        currentTrialIndex++;
+        trialCountEl.textContent = currentTrialIndex;
+
+        if (currentTrialIndex < conditions.length) {
+            setupStartButton();
+        } else {
+            endExperiment();
+        }
+    }
 
     /*
-       Sort by ID.
-    */
-
-    summaryData.sort(
-        (a, b) =>
-            a.ID -
-            b.ID
-    );
-
-
-    /* =====================================================
-       REGRESSION USING THE 9 CONDITION MEANS
-       =====================================================
-
-       Model:
-
-       MT = a + b(ID)
-
-       x = ID
-       y = Mean MT
-    */
-
-
-    const n =
-        summaryData.length;
-
-
-    const meanX =
-        summaryData.reduce(
-            (sum, row) =>
-                sum + row.ID,
-            0
-        ) / n;
-
-
-    const meanY =
-        summaryData.reduce(
-            (sum, row) =>
-                sum + row.meanMT,
-            0
-        ) / n;
-
-
-    let ssXY = 0;
-
-    let ssXX = 0;
-
-    let ssYY = 0;
-
-
-    summaryData.forEach(row => {
-
-        const dx =
-            row.ID -
-            meanX;
-
-
-        const dy =
-            row.meanMT -
-            meanY;
-
-
-        ssXY +=
-            dx * dy;
-
-
-        ssXX +=
-            dx * dx;
-
-
-        ssYY +=
-            dy * dy;
-
-    });
-
+     * MISS DETECTION
+     */
+    function handleCanvasMiss(e) {
+        if (!trialActive) return;
+        if (e.target === canvas || e.target === feedbackFlash) {
+            missCount++;
+            triggerFeedback(false);
+        }
+    }
 
     /*
-       Regression slope.
-    */
+     * END EXPERIMENT AND SHOW SUMMARY
+     */
+    function endExperiment() {
+        trialActive = false;
+        actionTarget.style.display = 'none';
+        startBtn.style.display = 'none';
 
-    const slope =
-        ssXY /
-        ssXX;
+        const totalMT = trialData.reduce((acc, row) => acc + row.movement_time_ms, 0);
+        const avgMT = Math.round(totalMT / trialData.length);
+        const totalErrors = trialData.reduce((acc, row) => acc + (row.errors > 0 ? 1 : 0), 0);
+        const errorRate = ((totalErrors / trialData.length) * 100).toFixed(1);
 
+        // Group by condition key: "A_W"
+        let conditionGroups = {};
+        trialData.forEach(row => {
+            const key = `${row.distance_A}_${row.width_W}`;
+            if (!conditionGroups[key]) {
+                conditionGroups[key] = {
+                    A: row.distance_A,
+                    W: row.width_W,
+                    ID: row.id_bits,
+                    times: []
+                };
+            }
+            conditionGroups[key].times.push(row.movement_time_ms);
+        });
 
-    /*
-       Regression intercept.
-    */
+        // Sort by ID
+        let sortedKeys = Object.keys(conditionGroups).sort((a, b) => conditionGroups[a].ID - conditionGroups[b].ID);
+        let tableRows = '';
 
-    const intercept =
-        meanY -
-        slope * meanX;
+        sortedKeys.forEach(key => {
+            const group = conditionGroups[key];
+            const avgTime = Math.round(group.times.reduce((a, b) => a + b, 0) / group.times.length);
 
+            tableRows += `
+                <tr>
+                    <td>${group.A}px</td>
+                    <td>${group.W}px</td>
+                    <td>${group.ID.toFixed(2)} bits</td>
+                    <td>${avgTime} ms</td>
+                    <td>${group.times.length}</td>
+                </tr>
+            `;
+        });
 
-    /*
-       R-squared.
+        overlayTitle.textContent = 'Experiment Results';
+        overlayBody.innerHTML = `
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-val">${avgMT} ms</div>
+                    <div class="metric-lbl">Mean MT</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-val">${errorRate}%</div>
+                    <div class="metric-lbl">Error Rate</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-val">${trialData.length}</div>
+                    <div class="metric-lbl">Trials</div>
+                </div>
+            </div>
 
-       R² = SSreg / SStotal
-
-       For simple linear regression,
-       this can also be calculated as:
-
-       R² = SSXY² / (SSXX × SSYY)
-    */
-
-    const rSquared =
-        (
-            ssXY * ssXY
-        ) /
-        (
-            ssXX * ssYY
-        );
-
-
-    /* =====================================================
-       CREATE CONDITION TABLE
-       ===================================================== */
-
-
-    let tableRows = "";
-
-
-    summaryData.forEach(row => {
-
-        tableRows += `
-
-            <tr>
-
-                <td>
-                    ${row.A}px
-                </td>
-
-                <td>
-                    ${row.W}px
-                </td>
-
-                <td>
-                    ${row.ID.toFixed(3)}
-                </td>
-
-                <td>
-                    ${row.meanMT.toFixed(2)} ms
-                </td>
-
-                <td>
-                    ${row.repetitions}
-                </td>
-
-            </tr>
-
+            <p><strong>Condition Summary (A, W, ID vs MT):</strong></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>A</th>
+                        <th>W</th>
+                        <th>ID</th>
+                        <th>Mean MT</th>
+                        <th>Reps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
         `;
 
-    });
-
-
-    /* =====================================================
-       DISPLAY FINAL RESULTS
-       ===================================================== */
-
-
-    overlayTitle.textContent =
-        "Experiment Results";
-
-
-    overlayBody.innerHTML = `
-
-        <div class="results-container">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Distance A
-                        </th>
-
-                        <th>
-                            Width W
-                        </th>
-
-                        <th>
-                            ID
-                        </th>
-
-                        <th>
-                            Mean MT
-                        </th>
-
-                        <th>
-                            Reps
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    ${tableRows}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <div class="regression-box">
-
-            <strong>
-                Fitts' Law Regression
-            </strong>
-
-            <div class="regression-equation">
-
-                MT =
-                ${intercept.toFixed(2)}
-                +
-                ${slope.toFixed(2)}
-                × ID
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    R²:
-                </strong>
-
-                ${rSquared.toFixed(3)}
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Slope:
-                </strong>
-
-                ${slope.toFixed(2)}
-                ms/bit
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Intercept:
-                </strong>
-
-                ${intercept.toFixed(2)}
-                ms
-
-            </div>
-
-
-            <div class="small-note">
-
-                Regression is calculated using
-                the 9 condition means.
-                Each condition contains
-                12 repetitions.
-
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div>
-
-                <strong>
-                    Overall Mean MT:
-                </strong>
-
-                ${overallMeanMT.toFixed(2)} ms
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Total Trials:
-                </strong>
-
-                ${trialData.length}
-
-            </div>
-
-
-            <div>
-
-                <strong>
-                    Error Rate:
-                </strong>
-
-                ${errorRate}%
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    beginExpBtn.textContent =
-        "Restart Test";
-
-
-    downloadCsvBtn.style.display =
-        "block";
-
-
-    overlay.style.display =
-        "flex";
-}
-
-
-/* =========================================================
-   DOWNLOAD RAW CSV
-   =========================================================
-
-   The CSV contains all 108 individual
-   trials.
-
-   The 9 condition means do NOT replace
-   the raw data.
-   ========================================================= */
-
-
-function downloadCSV() {
-
-    let csvContent =
-        "data:text/csv;charset=utf-8,";
-
+        beginExpBtn.textContent = 'Restart Test';
+        downloadCsvBtn.style.display = 'block';
+        overlay.style.display = 'flex';
+    }
 
     /*
-       CSV HEADER
-    */
+     * DOWNLOAD CLEAN CSV DATA
+     */
+    function downloadCSV() {
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "Trial,Distance_A,Width_W,ID_bits,MovementTime_ms,Errors\n";
 
-    csvContent +=
-        "Trial,Distance_A,Width_W,ID_bits,MovementTime_ms,Errors\n";
+        trialData.forEach(row => {
+            csvContent += `${row.trial},${row.distance_A},${row.width_W},${row.id_bits},${row.movement_time_ms},${row.errors}\n`;
+        });
 
-
-    /*
-       ADD ALL 108 RAW TRIALS
-    */
-
-    trialData.forEach(row => {
-
-        csvContent +=
-
-            `${row.trial},` +
-            `${row.distance_A},` +
-            `${row.width_W},` +
-            `${row.id_bits},` +
-            `${row.movement_time_ms},` +
-            `${row.errors}\n`;
-
-    });
-
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `fitts_law_thumb_data_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 
     /*
-       Encode CSV.
-    */
-
-    const encodedUri =
-        encodeURI(
-            csvContent
-        );
-
-
-    /*
-       Create download link.
-    */
-
-    const link =
-        document.createElement("a");
-
-
-    link.setAttribute(
-        "href",
-        encodedUri
-    );
-
-
-    link.setAttribute(
-        "download",
-        `fitts_law_thumb_data_${Date.now()}.csv`
-    );
-
-
-    document.body.appendChild(link);
-
-
-    link.click();
-
-
-    document.body.removeChild(link);
-}
-
-
-/* =========================================================
-   EVENT LISTENERS
-   ========================================================= */
-
-
-startBtn.addEventListener(
-    "pointerdown",
-    handleStartPress
-);
-
-
-actionTarget.addEventListener(
-    "pointerdown",
-    handleTargetPress
-);
-
-
-canvas.addEventListener(
-    "pointerdown",
-    handleCanvasMiss
-);
-
-
-beginExpBtn.addEventListener(
-    "click",
-    initExperiment
-);
-
-
-downloadCsvBtn.addEventListener(
-    "click",
-    downloadCSV
-);
-
-
+     * EVENT LISTENERS
+     */
+    startBtn.addEventListener('pointerdown', handleStartPress);
+    actionTarget.addEventListener('pointerdown', handleTargetPress);
+    canvas.addEventListener('pointerdown', handleCanvasMiss);
+    beginExpBtn.addEventListener('click', initExperiment);
+    downloadCsvBtn.addEventListener('click', downloadCSV);
 </script>
 
 </body>
 </html>
-```

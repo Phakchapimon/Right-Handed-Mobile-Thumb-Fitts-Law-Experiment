@@ -21,6 +21,7 @@ https://github.com/user-attachments/assets/c1ccfa61-ad35-462d-9c3d-951bb450b6e4
 
 **Results & Data Analysis:**
 Scattered plot data:
+
 <img width="400" height="497" alt="fitts_law_scatter_plot" src="https://github.com/user-attachments/assets/862d73f4-ea99-4fab-ae8a-9a0f98be50f5" />
 
 108 trials data table:

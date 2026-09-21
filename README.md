@@ -34,7 +34,7 @@ Scattered plot data:
 Fitts' Law Formula: 
 MT = 178.59 + 140.43(ID) 
 
-For 9 conditions: R^2=0.7455; Averaging the 12 trial repetitions per condition removes individual human trial-to-trial variance.
+For 9 conditions: R^2=0.7455; Averaging the 12 trial repetitions per condition reduces the influence of trial-to-trial variability.
 
 For 108 raw data: R^2=0.2184; Raw data includes human trial-to-trial variance across all 108 individual taps.
 
